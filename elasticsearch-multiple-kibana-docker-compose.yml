@@ -1,0 +1,60 @@
+version: '2.2'
+
+services:
+  elasticsearch-mult-1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.4
+    container_name: elasticsearch-mult-1
+    environment:
+      - cluster.name=docker-cluster-multiple
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch-multiple-kibana-docker-compose-1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elk-multiple
+
+  elasticsearch-mult-2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.4
+    container_name: elasticsearch-mult-2
+    environment:
+      - cluster.name=docker-cluster-multiple
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch-mult-1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch-multiple-kibana-docker-compose-2/elasticsearch/data:/usr/share/elasticsearch/data
+    networks:
+      - elk-multiple
+
+  kibana-mult:
+    image: docker.elastic.co/kibana/kibana:6.5.4
+    container_name: kibana-mult
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch-mult-1:9200
+    networks:
+      - elk-multiple
+    ports:
+      - 5601:5601
+
+  logstash-mult:
+    image: docker.elastic.co/logstash/logstash:6.5.4
+    container_name: logstash-mult
+    volumes:
+      - ./elasticsearch-multiple-kibana-docker-compose/logstash/pipeline:/usr/share/logstash/pipeline/
+    networks:
+      - elk-multiple
+    ports:
+      - 5044:5044
+
+networks:
+  elk-multiple:

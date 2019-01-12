@@ -1,0 +1,42 @@
+version: '2.2'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.4
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - ./elasticsearch-single-kibana-docker-compose/elasticsearch/data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - elk-single
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.5.4
+    container_name: kibana
+    networks:
+      - elk-single
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.5.4
+    container_name: logstash
+    volumes:
+      - ./elasticsearch-single-kibana-docker-compose/logstash/pipeline:/usr/share/logstash/pipeline/
+    networks:
+      - elk-single
+    ports:
+      - 5044:5044
+      - 9600:9600
+    depends_on:
+      - elasticsearch
+
+networks:
+  elk-single:
+    
