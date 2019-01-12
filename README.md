@@ -22,7 +22,7 @@ or
 **elasticsearch-multiple-kibana-docker-compose.yml** to setup a cluster of elasticsearch with two instances, single instance of kibana and single instance of logstash
 
 1. docker-compose filename.yml up (to start with dettached option use -d option)
-2. elasticsearch will be available at port 9200 (use http:localhost:9200 to verify)
+2. elasticsearch will be available on port 9200 (use http:localhost:9200 to verify)
 ```
 {
   "name" : "ObOgHm2",
@@ -42,4 +42,5 @@ or
   "tagline" : "You Know, for Search"
 }
 ````
-3. kibana will be available at port 5601
+3. kibana will be available on port 5601
+4. logstash will be listening for beats input on port 5400 
